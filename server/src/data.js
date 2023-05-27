@@ -3,8 +3,10 @@ const data = {
     {
       name: "user1",
       email: "user@gmail.com",
-      pass:'12345',
+      password:'123455665',
       address:'dhaka,bangladesh',
+      phone:'68508334'
     },
   ],
 };
+module.exports=data;

@@ -5,6 +5,7 @@ const createError =require('http-errors');
 const rateLimit=require('express-rate-limit');
 const xss=require('xss-clean');
 const userRouter = require("./routers/userRouter");
+const seedRouter = require("./routers/seedRouter");
 
 const app = express();
 
@@ -27,8 +28,10 @@ const toLogin=(req,res,next)=>{
 app.use(xss());
 app.use(morgan("dev"));
 app.use(bodyparser.json());
+app.use(rateLimiter);
 app.use(bodyparser.urlencoded({extended:true}));
 app.use("/api/users",userRouter);
+app.use("/api/seed",seedRouter);
 
 
 app.get("/", (req, res) => {
