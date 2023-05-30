@@ -6,12 +6,13 @@ const rateLimit=require('express-rate-limit');
 const xss=require('xss-clean');
 const userRouter = require("./routers/userRouter");
 const seedRouter = require("./routers/seedRouter");
+const { errorResponse } = require("./controllers/responseController");
 
 const app = express();
 
 const rateLimiter=rateLimit({
   windowMs:1*60*1000,
-  max:5,
+  max:500,// after this i have make it 5
   message:'Too many request from this ip!!'
 })
 //middleware function
@@ -52,8 +53,13 @@ app.use((req,res,next) => {
 });
 
 //server error handeling --> all the errors will come here..
-app.use((err,req,res,next) => {
-  return res.status(err.status||500).send("Something's wrong I can feel it") ;
-});
-module.exports={toLogin};
+app.use((err,res,req,next)=>{
+return errorResponse(res,{
+  statusCode:err.status,
+  message:err.message,
+})  
+})
+
+
+//exported modules...
 module.exports=app;

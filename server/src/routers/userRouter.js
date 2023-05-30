@@ -1,8 +1,9 @@
 const express =require('express');
-const { getprofile } = require('../controllers/userControl');
+const {getUsers } = require('../controllers/userControl');
 const userRouter=express.Router();
-// /api/users
 
-userRouter.get('/',getprofile);
+
+// /api/users
+userRouter.get('/',getUsers);
   
   module.exports= userRouter;
