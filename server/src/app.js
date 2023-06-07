@@ -53,11 +53,17 @@ app.use((req,res,next) => {
 });
 
 //server error handeling --> all the errors will come here..
-app.use((err,res,req,next)=>{
+/*app.use((err,res,req,next)=>{
 return errorResponse(res,{
   statusCode:err.status,
   message:err.message,
 })  
+})*/
+app.use((err,req,res,next)=>{
+  return res.status(err.status||500).json({
+    success:false,
+    message:err.message,
+  })
 })
 
 

@@ -10,7 +10,7 @@ const findWithId = async (id,options={}) => {
     throw createError(404, "Item with this ID does not exist !!");
  
 }
-return User;
+return item;
   } catch (error) {
     if (error instanceof mongoose.Error) {
         throw createError(400,'Invalid Item ID')

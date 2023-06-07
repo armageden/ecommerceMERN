@@ -51,7 +51,7 @@ const deleteUser = async (req, res, next) => {
     const userImagePath = user.image;
     fs.access(userImagePath, (err) => {
       if (err) {
-        console.error("user does not exist!");f
+        console.error("user image not exist!");f
       } else {
         fs.unlink(userImagePath, (err) => {
           if (error) {
