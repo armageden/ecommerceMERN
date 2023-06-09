@@ -1,5 +1,5 @@
 const createError = require("http-errors");
-const fs = require("fs");
+const fs = require("fs").promises;
 const User = require("../models/usermodel");
 const { successResponse } = require("./responseController");
 
@@ -8,6 +8,27 @@ const { error } = require("console");
 
 const getUsers = async (req, res, next) => {
   try {
+    const search=req.query.search||''
+    const page=Number(req.query.page)||1
+    const limit= Number(req.query.limit)||5
+    const searchRegExp=new RegExp('*'+search+'.*','i')
+    const filter={
+      isAdmin:{$ne:true},
+      $or:[
+        {name:{regex:searchRegExp}},
+        {email:{regex:searchRegExp}},
+        {phone:{regex:searchRegExp}},
+      ]
+    }
+
+    const options={password:0}
+    const users =await User.find(filter,options)
+      .limit(limit)
+      .skip((page-1)*limit)
+
+    const count=await User.find(filter).countDocuments();
+    if(!users)throw createError(404,'no users found')
+
     return successResponse(res, {
       statusCode: 200,
       message: "Users are returned",
@@ -46,7 +67,7 @@ const deleteUserById = async (req, res, next) => {
   try {
     const id = req.params.id;
     const options = { password: 0 };
-    const user = await findWithId(id, options);
+    const user = await findWithId(User,id, options);
     
     const userImagePath = user.image;
     fs.access(userImagePath, (err) => {
@@ -76,4 +97,4 @@ await User.findByIdAndDelete({_id:id,isAdmin:false})
     next(error);
   }
 };
-module.exports = { getUsers, getUserById, deleteUserById };
+module.exports = { getUsers, getUserById, deleteUserById, };
