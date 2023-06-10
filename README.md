@@ -32,6 +32,10 @@
 
 ## Add Multer middleware for file upload
 
-## POST /api/users --> create users
+## POST /api/users/preocess-register --> Process the registration
+
+## Create JWT
+
+## POST /api/users/verify --> verify + register into database
 
 ## PUT /api/users/:id --> update a single user by ID
