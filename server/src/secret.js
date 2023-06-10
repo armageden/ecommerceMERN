@@ -1,9 +1,23 @@
-require('dotenv').config();
+require("dotenv").config();
 const serverPort = process.env.SERVER_PORT || 3002;
 const mongodbURL =
-  process.env.MONGODB_ATLAS_URL || 'mongodb://localhost:27017/ecomMERNdb';
+  process.env.MONGODB_ATLAS_URL || "mongodb://localhost:27017/ecomMERNdb";
 
-const defaultImagePath=process.env.DEFAULT_USER_IMAGE_PATH||'public/image/users/Default_img.jpg'
+const defaultImagePath =
+  process.env.DEFAULT_USER_IMAGE_PATH || "public/image/users/Default_img.jpg";
 
+const jwtActivationKey =
+  process.env.JWT_ACTIVATION_KEY || "bfgijdi78rthhhiujfskj";
 
-  module.exports = { serverPort, mongodbURL ,defaultImagePath };
+const smtpUsername = process.env.SMTP_USERNAME || "";
+
+const smptPassword = process.env.SMTP_PASSWORD || "";
+
+module.exports = {
+  serverPort,
+  mongodbURL,
+  defaultImagePath,
+  jwtActivationKey,
+  smptPassword,
+  smtpUsername,
+};

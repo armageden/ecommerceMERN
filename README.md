@@ -36,6 +36,8 @@
 
 ## Create JWT
 
+## create smtp server & prepare email
+
 ## POST /api/users/verify --> verify + register into database
 
 ## PUT /api/users/:id --> update a single user by ID
