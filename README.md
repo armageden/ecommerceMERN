@@ -26,7 +26,7 @@
 
 ## Some Backend Services
 
-## Deleting Images service
+## Deleting Images Helper
 
 ## Add express validator middleware..
 
