@@ -5,29 +5,33 @@ const { successResponse } = require("./responseController");
 
 const { findWithId } = require("../services/findItem");
 const { error } = require("console");
+const { deleteImage } = require("../helper/deleteImage");
+const { createJsonWebToken } = require("../helper/jsonwebtoken");
+const { jwtActivationKey, clientURL } = require("../secret");
+const { emailWithNodeMailer } = require("../helper/email");
 
 const getUsers = async (req, res, next) => {
   try {
-    const search=req.query.search||''
-    const page=Number(req.query.page)||1
-    const limit= Number(req.query.limit)||5
-    const searchRegExp=new RegExp('*'+search+'.*','i')
-    const filter={
-      isAdmin:{$ne:true},
-      $or:[
-        {name:{regex:searchRegExp}},
-        {email:{regex:searchRegExp}},
-        {phone:{regex:searchRegExp}},
-      ]
-    }
+    const search = req.query.search || "";
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 5;
+    const searchRegExp = new RegExp("*" + search + ".*", "i");
+    const filter = {
+      isAdmin: { $ne: true },
+      $or: [
+        { name: { regex: searchRegExp } },
+        { email: { regex: searchRegExp } },
+        { phone: { regex: searchRegExp } },
+      ],
+    };
 
-    const options={password:0}
-    const users =await User.find(filter,options)
+    const options = { password: 0 };
+    const users = await User.find(filter, options)
       .limit(limit)
-      .skip((page-1)*limit)
+      .skip((page - 1) * limit);
 
-    const count=await User.find(filter).countDocuments();
-    if(!users)throw createError(404,'no users found')
+    const count = await User.find(filter).countDocuments();
+    if (!users) throw createError(404, "no users found");
 
     return successResponse(res, {
       statusCode: 200,
@@ -50,7 +54,7 @@ const getUsers = async (req, res, next) => {
 const getUserById = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const user = await findWithId(User,id, options);
+    const user = await findWithId(User, id, options);
     return successResponse(res, {
       statusCode: 200,
       message: "User is returned",
@@ -67,25 +71,14 @@ const deleteUserById = async (req, res, next) => {
   try {
     const id = req.params.id;
     const options = { password: 0 };
-    const user = await findWithId(User,id, options);
-    
-    const userImagePath = user.image;
-    fs.access(userImagePath, (err) => {
-      if (err) {
-        console.error("user image not exist!");f
-      } else {
-        fs.unlink(userImagePath, (err) => {
-          if (error) {
-            throw err;
-          }
-          console.log("user image was deleted");
-        });
-      }
-    });
+    const user = await findWithId(User, id, options);
 
-await User.findByIdAndDelete({_id:id,isAdmin:false})
-    
-  
+    const userImagePath = user.image;
+
+    deleteImage(userImagePath);
+
+    await User.findByIdAndDelete({ _id: id, isAdmin: false });
+
     return successResponse(res, {
       statusCode: 200,
       message: "User was Deleted",
@@ -97,4 +90,51 @@ await User.findByIdAndDelete({_id:id,isAdmin:false})
     next(error);
   }
 };
-module.exports = { getUsers, getUserById, deleteUserById, };
+const processRegister = async (req, res, next) => {
+  try {
+    const { name, email, password, phone, address } = req.body;
+    const userExists = await User.exists({ email: email });
+    if (userExists) {
+      throw createError(
+        409,
+        "User with this email already exists..Please sign in"
+      );
+    }
+
+    // Create Json web token...
+    const token = createJsonWebToken(
+      { name, email, password, phone, address },
+      jwtActivationKey,
+      "10m"
+    );
+
+    // Prepare email
+    const emailData = {
+      email,
+      subject: "Account Activation Mail",
+      html: `
+        <h2> Hello ${name} ! </h2> 
+        <p> Please click here to <a href="${clientURL}/api/users/activate${token}" target="_blank">activate</a></p>       
+        `,
+    };
+
+    //send email with nodemailer
+
+    try {
+      await emailWithNodeMailer(emailData);
+    } catch (emailError) {
+      next(createError(500, "Failed to send verification email"));
+      return;
+    }
+    return successResponse(res, {
+      statusCode: 200,
+      message: "Check your email to verify your account !",
+      payload: {
+        token,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = { getUsers, getUserById, deleteUserById, processRegister };
