@@ -137,4 +137,57 @@ const processRegister = async (req, res, next) => {
     next(error);
   }
 };
-module.exports = { getUsers, getUserById, deleteUserById, processRegister };
+const activateUserAccount = async (req, res, next) => {
+  try {
+    const { name, email, password, phone, address } = req.body;
+    const userExists = await User.exists({ email: email });
+    if (userExists) {
+      throw createError(
+        409,
+        "User with this email already exists..Please sign in"
+      );
+    }
+
+    // Create Json web token...
+    const token = createJsonWebToken(
+      { name, email, password, phone, address },
+      jwtActivationKey,
+      "10m"
+    );
+
+    // Prepare email
+    const emailData = {
+      email,
+      subject: "Account Activation Mail",
+      html: `
+        <h2> Hello ${name} ! </h2> 
+        <p> Please click here to <a href="${clientURL}/api/users/activate${token}" target="_blank">activate</a></p>       
+        `,
+    };
+
+    //send email with nodemailer
+
+    try {
+      await emailWithNodeMailer(emailData);
+    } catch (emailError) {
+      next(createError(500, "Failed to send verification email"));
+      return;
+    }
+    return successResponse(res, {
+      statusCode: 200,
+      message: "Check your email to verify your account !",
+      payload: {
+        token,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = {
+  getUsers,
+  getUserById,
+  activateUserAccount,
+  deleteUserById,
+  processRegister,
+};
