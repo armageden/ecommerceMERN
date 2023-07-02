@@ -11,7 +11,7 @@ const { upload } = require("../middlewares/uploadFiles");
 const userRouter = express.Router();
 
 // /api/users
-userRouter.post("/process-register",upload.single("image"), processRegister);
+userRouter.post("/process-register", upload.single("image"), processRegister);
 userRouter.get("/", getUsers);
 userRouter.post("/verify", activateUserAccount);
 userRouter.get("/:id", getUserById);
