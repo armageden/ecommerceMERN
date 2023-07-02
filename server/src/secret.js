@@ -14,6 +14,8 @@ const smtpUsername = process.env.SMTP_USERNAME || "";
 const smptPassword = process.env.SMTP_PASSWORD || "";
 const clientURL = process.env.CLIENT_URL || "";
 
+const uploadDir = process.env.UPLOAD_FILE || "public/images/users";
+
 module.exports = {
   serverPort,
   mongodbURL,
@@ -22,4 +24,5 @@ module.exports = {
   smptPassword,
   smtpUsername,
   clientURL,
+  uploadDir,
 };
