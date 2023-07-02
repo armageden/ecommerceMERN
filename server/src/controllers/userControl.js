@@ -1,4 +1,5 @@
 const createError = require("http-errors");
+const jwt=require('jsonwebtoken')
 const fs = require("fs").promises;
 const User = require("../models/usermodel");
 const { successResponse } = require("./responseController");
@@ -139,47 +140,32 @@ const processRegister = async (req, res, next) => {
 };
 const activateUserAccount = async (req, res, next) => {
   try {
-    const { name, email, password, phone, address } = req.body;
-    const userExists = await User.exists({ email: email });
-    if (userExists) {
-      throw createError(
-        409,
-        "User with this email already exists..Please sign in"
-      );
+    const token = req.body.token;
+    if (!token) {
+      throw createError(404,'token not found')
     }
-
-    // Create Json web token...
-    const token = createJsonWebToken(
-      { name, email, password, phone, address },
-      jwtActivationKey,
-      "10m"
-    );
-
-    // Prepare email
-    const emailData = {
-      email,
-      subject: "Account Activation Mail",
-      html: `
-        <h2> Hello ${name} ! </h2> 
-        <p> Please click here to <a href="${clientURL}/api/users/activate${token}" target="_blank">activate</a></p>       
-        `,
-    };
-
-    //send email with nodemailer
-
     try {
-      await emailWithNodeMailer(emailData);
-    } catch (emailError) {
-      next(createError(500, "Failed to send verification email"));
-      return;
+      const decoded=jwt.verify(token,jwtActivationKey)
+      if (!decoded) {
+        throw createError(401,'User was not verified !')
+      }
+      
+
+      await User.create(decoded)
+  
+      return successResponse(res, {
+        statusCode: 201,
+        message: "User account was registered !",
+      });
+    } catch (error) {
+      if (error.name==='TokenExpiredError') {
+        throw createError(401,'Token has expired')
+      }else if(error.name==='JsonWebTokenError'){
+        throw createError(401,'Invalid Token')
+      }else{
+        throw error
+      }
     }
-    return successResponse(res, {
-      statusCode: 200,
-      message: "Check your email to verify your account !",
-      payload: {
-        token,
-      },
-    });
   } catch (error) {
     next(error);
   }
