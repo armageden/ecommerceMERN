@@ -17,7 +17,7 @@ const userSchema = new Schema(
       lowercase: true,
       unique: true,
       minlength: [3, "Email name can not be less than 3 char"],
-      maxlength: [31, "Email name can only can be 31 char"],
+      maxlength: [31, "Email name can only can be upto 31 char"],
       validate: {
         validator: function (v) {
           return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
@@ -28,7 +28,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       require: [true, "User Password is required !"],
-      minlength: [8, "Password can not be less than 8 char"],
+      minlength: [6, "Password can not be less than 6 char"],
       set: (v) => bcrypt.hashSync(v, bcrypt.genSaltSync(10)),
     },
     image: {
@@ -38,6 +38,7 @@ const userSchema = new Schema(
     address: {
       type: String,
       require: [true, "User address is required"],
+      minlength: [6, "Address can not be less than 6 char"],
     },
     phone: {
       type: String,
