@@ -1,22 +1,24 @@
 const User = require("../models/usermodel");
 const createError = require("http-errors");
-const mongoose=require('mongoose')
+const mongoose = require("mongoose");
 
-const findWithId = async (Model,id,options={}) => {
+const findWithId = async (Model, id, options = {}) => {
   try {
     const item = await Model.findById(id, options);
-  
-  if (!item) {
-    throw createError(404, `${Model.modelName} with this ID does not exist !!`);
- 
-}
-return item;
+
+    if (!item) {
+      throw createError(
+        404,
+        `${Model.modelName} with this ID does not exist !!`
+      );
+    }
+    return item;
   } catch (error) {
     if (error instanceof mongoose.Error) {
-        throw createError(400,'Invalid Item ID')
-
+      throw createError(400, "Invalid Item ID");
+    }
+    throw error;
   }
-  throw error;
-}}
+};
 
-module.exports={findWithId}
+module.exports = { findWithId };

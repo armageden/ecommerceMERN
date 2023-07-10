@@ -55,6 +55,7 @@ const getUsers = async (req, res, next) => {
 const getUserById = async (req, res, next) => {
   try {
     const id = req.params.id;
+    const options = { password: 0 };
     const user = await findWithId(User, id, options);
     return successResponse(res, {
       statusCode: 200,
@@ -94,10 +95,17 @@ const deleteUserById = async (req, res, next) => {
 const processRegister = async (req, res, next) => {
   try {
     const { name, email, password, phone, address } = req.body;
-if (!req.file) {
-  
-}
-    const imageBufferString = req.file.buffer.toString("base64");
+    const image = req.file;
+    if (!image) {
+      throw createError(400, "image file is required");
+    }
+    if (image.size > 1024 * 1024 * 2) {
+      throw createError(
+        400,
+        "image file is too large! Maximum allowed size is 2 MB"
+      );
+    }
+    const imageBufferString = image.buffer.toString("base64");
 
     const userExists = await User.exists({ email: email });
     if (userExists) {
@@ -109,7 +117,7 @@ if (!req.file) {
 
     // Create Json web token...
     const token = createJsonWebToken(
-      { name, email, password, phone, address,image:imageBufferString },
+      { name, email, password, phone, address, image: imageBufferString },
       jwtActivationKey,
       "10m"
     );
@@ -174,10 +182,57 @@ const activateUserAccount = async (req, res, next) => {
     next(error);
   }
 };
+
+const updateUserById = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const options = { password: 0 };
+    await findWithId(User, userId, options);
+    const updateOptions = { new: true, runValidators: true, context: "query" };
+    let updates = {};
+
+    for (let key in req.body) {
+      if (["name", "password", "phone", "address"].includes(key)) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    const image = req.file;
+    if (image) {
+      if (image.size > 1024 * 1024 * 2) {
+        throw createError(
+          400,
+          "image file is too large! Maximum allowed size is 2 MB"
+        );
+      }
+      updates.image = image.buffer.toString("base64");
+    }
+   // delete updates.email;
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updates,
+      updateOptions
+    ).select("-password");
+
+    if (!updatedUser) {
+      throw createError(404, "User with this id doesn't exist");
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User was Updated",
+      payload: updatedUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getUsers,
   getUserById,
   activateUserAccount,
   deleteUserById,
   processRegister,
+  updateUserById,
 };
