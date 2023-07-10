@@ -1,5 +1,5 @@
 const createError = require("http-errors");
-const jwt=require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 const fs = require("fs").promises;
 const User = require("../models/usermodel");
 const { successResponse } = require("./responseController");
@@ -94,6 +94,11 @@ const deleteUserById = async (req, res, next) => {
 const processRegister = async (req, res, next) => {
   try {
     const { name, email, password, phone, address } = req.body;
+if (!req.file) {
+  
+}
+    const imageBufferString = req.file.buffer.toString("base64");
+
     const userExists = await User.exists({ email: email });
     if (userExists) {
       throw createError(
@@ -104,7 +109,7 @@ const processRegister = async (req, res, next) => {
 
     // Create Json web token...
     const token = createJsonWebToken(
-      { name, email, password, phone, address },
+      { name, email, password, phone, address,image:imageBufferString },
       jwtActivationKey,
       "10m"
     );
@@ -122,7 +127,7 @@ const processRegister = async (req, res, next) => {
     //send email with nodemailer
 
     try {
-    await emailWithNodeMailer(emailData);
+      await emailWithNodeMailer(emailData);
     } catch (emailError) {
       next(createError(500, "Failed to send verification email"));
       return;
@@ -142,28 +147,27 @@ const activateUserAccount = async (req, res, next) => {
   try {
     const token = req.body.token;
     if (!token) {
-      throw createError(404,'token not found')
+      throw createError(404, "token not found");
     }
     try {
-      const decoded=jwt.verify(token,jwtActivationKey)
+      const decoded = jwt.verify(token, jwtActivationKey);
       if (!decoded) {
-        throw createError(401,'User was not verified !')
+        throw createError(401, "User was not verified !");
       }
-      
 
-      await User.create(decoded)
-  
+      await User.create(decoded);
+
       return successResponse(res, {
         statusCode: 201,
         message: "User account was registered !",
       });
     } catch (error) {
-      if (error.name==='TokenExpiredError') {
-        throw createError(401,'Token has expired')
-      }else if(error.name==='JsonWebTokenError'){
-        throw createError(401,'Invalid Token')
-      }else{
-        throw error
+      if (error.name === "TokenExpiredError") {
+        throw createError(401, "Token has expired");
+      } else if (error.name === "JsonWebTokenError") {
+        throw createError(401, "Invalid Token");
+      } else {
+        throw error;
       }
     }
   } catch (error) {
