@@ -8,6 +8,8 @@ const defaultImagePath =
 
 const jwtActivationKey =
   process.env.JWT_ACTIVATION_KEY || "bfgijdi78rthhhiujfskj";
+const jwtAccesKey =
+  process.env.JWT_ACCESS_KEY || "dbiuebui78y3uhui^$&G";
 
 const smtpUsername = process.env.SMTP_USERNAME || "";
 
@@ -22,4 +24,5 @@ module.exports = {
   smptPassword,
   smtpUsername,
   clientURL,
+  jwtAccesKey
 };
