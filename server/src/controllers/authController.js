@@ -42,7 +42,7 @@ const handelLogin = async (req, res) => {
     //success response
     return successResponse(res, {
       statusCode: 200,
-      message: "Users are returned",
+      message: "Users loggedin",
       payload: {
         User,
       },
@@ -51,4 +51,19 @@ const handelLogin = async (req, res) => {
     next(error);
   }
 };
-module.exports = handelLogin;
+const handelLogout = async (req, res) => {
+  try {
+   
+    //success response
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User loggedout",
+      payload: {
+        User,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+module.exports = {handelLogin,handelLogout};
