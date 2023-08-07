@@ -53,7 +53,7 @@ const handelLogin = async (req, res) => {
 };
 const handelLogout = async (req, res) => {
   try {
-   
+    res.clearCookie("access_token");
     //success response
     return successResponse(res, {
       statusCode: 200,
@@ -66,4 +66,4 @@ const handelLogout = async (req, res) => {
     next(error);
   }
 };
-module.exports = {handelLogin,handelLogout};
+module.exports = { handelLogin, handelLogout };
