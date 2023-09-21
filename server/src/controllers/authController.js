@@ -5,7 +5,7 @@ const { successResponse } = require("./responseController");
 const { createJsonWebToken } = require("../helper/jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { jwtAccesKey } = require("../secret");
-const handelLogin = async (req, res) => {
+const handelLogin = async (req, res, next) => {
   try {
     // email,password req.body
     const { email, password } = req.body;
@@ -32,8 +32,12 @@ const handelLogin = async (req, res) => {
     // token,cookie
 
     //create jwt
-    const accesstoken = createJsonWebToken({ email }, jwtAccesKey, "10m");
-    res.cookie("access_token", accesstoken, {
+    const accessToken = createJsonWebToken(
+      { _id: user._id },
+      jwtAccesKey,
+      "10m"
+    );
+    res.cookie("accessToken", accessToken, {
       maxAge: 15 * 60 * 1000, //15 min
       httpOnly: true,
       //secure: true,

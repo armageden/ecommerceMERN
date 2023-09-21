@@ -207,7 +207,7 @@ const updateUserById = async (req, res, next) => {
       }
       updates.image = image.buffer.toString("base64");
     }
-   // delete updates.email;
+    // delete updates.email;
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       updates,
