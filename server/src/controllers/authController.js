@@ -33,7 +33,7 @@ const handelLogin = async (req, res, next) => {
 
     //create jwt
     const accessToken = createJsonWebToken(
-      user,
+      {user},
       jwtAccesKey,
       "15m"
     );
