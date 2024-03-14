@@ -33,9 +33,9 @@ const handelLogin = async (req, res, next) => {
 
     //create jwt
     const accessToken = createJsonWebToken(
-      { _id: user._id },
+      user,
       jwtAccesKey,
-      "10m"
+      "15m"
     );
     res.cookie("accessToken", accessToken, {
       maxAge: 15 * 60 * 1000, //15 min
