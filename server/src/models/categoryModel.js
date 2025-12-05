@@ -16,6 +16,10 @@ const categorySchema = new Schema(
             lowercase: true,
             unique: true,
         },
+        image: {
+            type: Buffer,
+            contentType: String,
+        },
     },
     { timestamps: true }
 );

@@ -7,14 +7,25 @@ const { successResponse } = require("./responseController");
 const createCategory = async (req, res, next) => {
     try {
         const { name } = req.body;
-        const slug = slugify(name, { lower: true });
+        const slug = slugify(name, { lower: true, strict: true });
 
         const categoryExists = await Category.exists({ name: name });
         if (categoryExists) {
             throw createError(409, "Category with this name already exists");
         }
 
-        const category = await Category.create({ name, slug });
+        const categoryData = { name, slug };
+
+        // Handle image upload
+        const image = req.file;
+        if (image) {
+            if (image.size > 1024 * 1024 * 2) {
+                throw createError(400, "Image file is too large! Max 2MB allowed");
+            }
+            categoryData.image = image.buffer.toString("base64");
+        }
+
+        const category = await Category.create(categoryData);
 
         return successResponse(res, {
             statusCode: 201,
@@ -45,7 +56,7 @@ const getCategories = async (req, res, next) => {
 const getCategory = async (req, res, next) => {
     try {
         const { slug } = req.params;
-        const category = await Category.findOne({ slug }).select("name slug");
+        const category = await Category.findOne({ slug }).select("name slug image");
 
         if (!category) {
             throw createError(404, "Category not found");
@@ -70,7 +81,16 @@ const updateCategory = async (req, res, next) => {
         const updateData = {};
         if (name) {
             updateData.name = name;
-            updateData.slug = slugify(name, { lower: true });
+            updateData.slug = slugify(name, { lower: true, strict: true });
+        }
+
+        // Handle image upload
+        const image = req.file;
+        if (image) {
+            if (image.size > 1024 * 1024 * 2) {
+                throw createError(400, "Image file is too large! Max 2MB allowed");
+            }
+            updateData.image = image.buffer.toString("base64");
         }
 
         const category = await Category.findOneAndUpdate({ slug }, updateData, {
