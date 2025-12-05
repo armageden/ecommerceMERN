@@ -9,6 +9,7 @@ const userRouter = require("./routers/userRouter");
 const seedRouter = require("./routers/seedRouter");
 const { errorResponse } = require("./controllers/responseController");
 const authRouter = require("./routers/authRouter");
+const categoryRouter = require("./routers/categoryRouter");
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/seed", seedRouter);
+app.use("/api/categories", categoryRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the server!");
