@@ -68,6 +68,15 @@ const getProducts = async (req, res, next) => {
             }
         }
 
+        const minPrice = req.query.minPrice;
+        const maxPrice = req.query.maxPrice;
+
+        if (minPrice || maxPrice) {
+            filter.price = {};
+            if (minPrice) filter.price.$gte = Number(minPrice);
+            if (maxPrice) filter.price.$lte = Number(maxPrice);
+        }
+
         const products = await Product.find(filter)
             .populate("category")
             .skip((page - 1) * limit)
