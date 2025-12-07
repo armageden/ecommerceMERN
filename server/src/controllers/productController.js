@@ -52,7 +52,7 @@ const getProducts = async (req, res, next) => {
         const category = req.query.category || "";
         const sort = req.query.sort || "-createdAt"; // Default sort by newest
 
-        const searchRegExp = new RegExp(".*" + search + ".*", "i");
+        const searchRegExp = new RegExp(".*" + search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ".*", "i");
 
         const filter = {
             $or: [
