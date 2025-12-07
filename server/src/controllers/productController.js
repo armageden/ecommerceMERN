@@ -50,6 +50,7 @@ const getProducts = async (req, res, next) => {
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 10;
         const category = req.query.category || "";
+        const sort = req.query.sort || "-createdAt"; // Default sort by newest
 
         const searchRegExp = new RegExp(".*" + search + ".*", "i");
 
@@ -77,11 +78,18 @@ const getProducts = async (req, res, next) => {
             if (maxPrice) filter.price.$lte = Number(maxPrice);
         }
 
+        // Dynamic sorting logic
+        let sortCriteria = {};
+        if (sort) {
+            const sortFields = sort.split(",").join(" ");
+            sortCriteria = sortFields;
+        }
+
         const products = await Product.find(filter)
             .populate("category")
             .skip((page - 1) * limit)
             .limit(limit)
-            .sort({ createdAt: -1 });
+            .sort(sortCriteria);
 
         const count = await Product.find(filter).countDocuments();
 
