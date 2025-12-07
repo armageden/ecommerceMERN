@@ -71,11 +71,16 @@ const getProducts = async (req, res, next) => {
 
         const minPrice = req.query.minPrice;
         const maxPrice = req.query.maxPrice;
+        const shipping = req.query.shipping;
 
         if (minPrice || maxPrice) {
             filter.price = {};
             if (minPrice) filter.price.$gte = Number(minPrice);
             if (maxPrice) filter.price.$lte = Number(maxPrice);
+        }
+
+        if (shipping) {
+            filter.shipping = shipping === "true";
         }
 
         // Dynamic sorting logic
