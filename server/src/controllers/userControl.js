@@ -227,7 +227,122 @@ const updateUserById = async (req, res, next) => {
     next(error);
   }
 };
+// Controller to manage user status (ban/unban)
+// Only admin can access this
+const handleManageUserStatusById = async (req, res, next) => {
+  try {
+    // Get user ID from request parameters
+    const userId = req.params.id;
 
+    // Get the action (ban or unban) from request body
+    const action = req.body.action;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    // If user not found, throw error
+    if (!user) {
+      throw createError(404, "User not found");
+    }
+
+    // Update the user status based on action
+    if (action === "ban") {
+      user.isBanned = true;
+    } else if (action === "unban") {
+      user.isBanned = false;
+    } else {
+      throw createError(400, "Invalid action. Use 'ban' or 'unban'");
+    }
+
+    // Save the updated user to database
+    await user.save();
+
+    // Return success response
+    return successResponse(res, {
+      statusCode: 200,
+      message: `User was ${action}ned successfully`,
+      payload: { user },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Controller to update logged-in user's profile
+const handleUpdateProfile = async (req, res, next) => {
+  try {
+    // Get the logged-in user's ID from the request object (set by isLoggedIn middleware)
+    const userId = req.user._id;
+
+    // Prepare the update object
+    const updates = {};
+
+    // List of allowed fields to update
+    const allowedFields = ["name", "phone", "address"];
+
+    // Loop through the request body and add allowed fields to updates object
+    for (const key in req.body) {
+      if (allowedFields.includes(key)) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    // Handle image upload if present
+    const image = req.file;
+    if (image) {
+      // Check image size (max 2MB)
+      if (image.size > 1024 * 1024 * 2) {
+        throw createError(400, "Image file is too large! Maximum allowed size is 2 MB");
+      }
+      // Convert image buffer to base64 string
+      updates.image = image.buffer.toString("base64");
+    }
+
+    // Update the user in the database
+    // { new: true } returns the updated document
+    // { runValidators: true } ensures schema validation rules are applied
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updates,
+      { new: true, runValidators: true }
+    ).select("-password"); // Exclude password from the result
+
+    if (!updatedUser) {
+      throw createError(404, "User not found");
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "Profile updated successfully",
+      payload: updatedUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Controller to get logged-in user's profile
+const handleGetUserProfile = async (req, res, next) => {
+  try {
+    // Get the logged-in user's ID
+    const userId = req.user._id;
+
+    // Find the user and exclude the password field
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      throw createError(404, "User not found");
+    }
+
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User profile returned successfully",
+      payload: { user },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   getUsers,
   getUserById,
@@ -235,4 +350,7 @@ module.exports = {
   deleteUserById,
   processRegister,
   updateUserById,
+  handleManageUserStatusById,
+  handleUpdateProfile,
+  handleGetUserProfile,
 };
