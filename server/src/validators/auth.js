@@ -46,5 +46,67 @@ const validatUserRegistration = [
     .withMessage("User image is required"),
 ];
 // sign in validation
+const validateUserSignIn = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Invalid Email address!"),
+  body("password")
+    .trim()
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password should be atleast 6 character long"),
+];
 
-module.exports = { validatUserRegistration };
+const validateUserForgetPassword = [
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Invalid Email address!"),
+];
+
+const validateUserResetPassword = [
+  body("token").trim().notEmpty().withMessage("Token is required"),
+  body("password")
+    .trim()
+    .notEmpty()
+    .withMessage("Password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password should be atleast 6 character long")
+    .matches(/^.*(?=.{6,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&? "]).*$/)
+    .withMessage(
+      "Password should contain at least one uppercase letter,one lowercase letter,one number and one special character"
+    ),
+];
+
+const validateUserPasswordUpdate = [
+  body("oldPassword")
+    .trim()
+    .notEmpty()
+    .withMessage("Old password is required")
+    .isLength({ min: 6 })
+    .withMessage("Old password should be atleast 6 character long"),
+  body("newPassword")
+    .trim()
+    .notEmpty()
+    .withMessage("New password is required")
+    .isLength({ min: 6 })
+    .withMessage("New password should be atleast 6 character long")
+    .matches(/^.*(?=.{6,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[!#$%&? "]).*$/)
+    .withMessage(
+      "Password should contain at least one uppercase letter,one lowercase letter,one number and one special character"
+    ),
+];
+
+module.exports = {
+  validatUserRegistration,
+  validateUserSignIn,
+  validateUserForgetPassword,
+  validateUserResetPassword,
+  validateUserPasswordUpdate,
+};
