@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -8,6 +9,8 @@ const Login = () => {
     });
 
     const [errors, setErrors] = useState({});
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({
@@ -38,7 +41,7 @@ const Login = () => {
         return newErrors;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
@@ -46,13 +49,18 @@ const Login = () => {
             return;
         }
 
-        console.log('Login submitted:', formData);
-        // TODO: Implement API call
+        try {
+            await login(formData.email, formData.password);
+            navigate('/');
+        } catch (error) {
+            setErrors({ form: error.response?.data?.message || 'Login failed' });
+        }
     };
 
     return (
         <div className="auth-container">
             <h2>Login</h2>
+            {errors.form && <div className="error-message" style={{ marginBottom: '1rem' }}>{errors.form}</div>}
             <form onSubmit={handleSubmit} noValidate>
                 <div className="form-group">
                     <label htmlFor="email">Email</label>

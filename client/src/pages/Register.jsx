@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -12,6 +13,8 @@ const Register = () => {
     });
 
     const [errors, setErrors] = useState({});
+    const { register } = useAuth();
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         if (e.target.name === 'image') {
@@ -54,7 +57,7 @@ const Register = () => {
         return newErrors;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
@@ -62,13 +65,27 @@ const Register = () => {
             return;
         }
 
-        console.log('Register submitted:', formData);
-        // TODO: Implement API call with FormData
+        try {
+            const data = new FormData();
+            for (const key in formData) {
+                data.append(key, formData[key]);
+            }
+
+            await register(data);
+            // After registration, user might need to verify email or login
+            // For now, let's redirect to login or show a success message
+            // Assuming backend sends a success message about email verification
+            alert('Registration successful! Please check your email to verify your account.');
+            navigate('/login');
+        } catch (error) {
+            setErrors({ form: error.response?.data?.message || 'Registration failed' });
+        }
     };
 
     return (
         <div className="auth-container">
             <h2>Register</h2>
+            {errors.form && <div className="error-message" style={{ marginBottom: '1rem' }}>{errors.form}</div>}
             <form onSubmit={handleSubmit} noValidate encType="multipart/form-data">
                 <div className="form-group">
                     <label htmlFor="name">Name</label>
