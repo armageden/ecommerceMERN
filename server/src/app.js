@@ -12,6 +12,9 @@ const authRouter = require("./routers/authRouter");
 const categoryRouter = require("./routers/categoryRouter");
 const productRouter = require("./routers/productRouter");
 
+const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
+
 const app = express();
 
 const rateLimiter = rateLimit({
@@ -31,6 +34,8 @@ const toLogin = (req, res, next) => {
 };
 app.use(cookieParser());
 app.use(xss());
+app.use(helmet()); // Secure HTTP headers
+app.use(mongoSanitize()); // Prevent NoSQL injection
 app.use(morgan("dev"));
 app.use(bodyparser.json());
 app.use(rateLimiter);
