@@ -71,8 +71,7 @@ const handelLogout = async (req, res) => {
     next(error);
   }
 };
-const { jwtAccesKey, jwtResetPasswordKey, clientURL } = require("../secret");
-const { emailWithNodeMailer } = require("../helper/email");
+
 
 const handleForgetPassword = async (req, res, next) => {
   try {
