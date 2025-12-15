@@ -7,6 +7,10 @@ import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import Orders from './pages/Orders'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
+import AdminDashboard from './pages/AdminDashboard'
+import AdminUsers from './pages/AdminUsers'
+import AdminCategories from './pages/AdminCategories'
 
 function App() {
   return (
@@ -21,6 +25,13 @@ function App() {
           <Route path="" element={<Dashboard />}>
             <Route path="profile" element={<Profile />} />
             <Route path="orders" element={<Orders />} />
+          </Route>
+        </Route>
+
+        <Route path="/admin/dashboard" element={<AdminRoute />}>
+          <Route path="" element={<AdminDashboard />}>
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="categories" element={<AdminCategories />} />
           </Route>
         </Route>
       </Routes>
