@@ -11,6 +11,8 @@ import AdminRoute from './components/AdminRoute'
 import AdminDashboard from './pages/AdminDashboard'
 import AdminUsers from './pages/AdminUsers'
 import AdminCategories from './pages/AdminCategories'
+import AdminProducts from './pages/AdminProducts'
+import AdminProductForm from './pages/AdminProductForm'
 
 function App() {
   return (
@@ -32,6 +34,9 @@ function App() {
           <Route path="" element={<AdminDashboard />}>
             <Route path="users" element={<AdminUsers />} />
             <Route path="categories" element={<AdminCategories />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="products/create" element={<AdminProductForm />} />
+            <Route path="products/edit/:slug" element={<AdminProductForm />} />
           </Route>
         </Route>
       </Routes>
