@@ -3,6 +3,7 @@ import './App.css'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import ProductDetails from './pages/ProductDetails'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import Orders from './pages/Orders'
@@ -20,6 +21,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/product/:slug" element={<ProductDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
