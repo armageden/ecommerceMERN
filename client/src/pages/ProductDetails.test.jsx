@@ -7,6 +7,14 @@ import api from '../api/axios';
 // Mock the API module
 vi.mock('../api/axios');
 
+// Mock CartContext
+const mockAddToCart = vi.fn();
+vi.mock('../context/CartContext', () => ({
+    useCart: () => ({
+        addToCart: mockAddToCart,
+    }),
+}));
+
 describe('ProductDetails Component', () => {
     it('renders product details', async () => {
         // Mock successful API responses

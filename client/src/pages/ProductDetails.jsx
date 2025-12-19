@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../api/axios';
+import { useCart } from '../context/CartContext';
 
 /**
  * ProductDetails Component
@@ -15,6 +16,7 @@ import api from '../api/axios';
  */
 const ProductDetails = () => {
     const { slug } = useParams();
+    const { addToCart } = useCart();
     const [product, setProduct] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -88,7 +90,15 @@ const ProductDetails = () => {
                         <p>Shipping: {product.shipping ? 'Available' : 'Not Available'}</p>
                     </div>
 
-                    <button className="btn-primary btn-large">Add to Cart</button>
+                    <button
+                        onClick={() => {
+                            addToCart(product);
+                            alert('Item added to cart');
+                        }}
+                        className="btn-primary btn-large"
+                    >
+                        Add to Cart
+                    </button>
                 </div>
             </div>
 
