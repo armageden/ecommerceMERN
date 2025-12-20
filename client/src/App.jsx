@@ -5,6 +5,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import ProductDetails from './pages/ProductDetails'
 import CartPage from './pages/CartPage'
+import Checkout from './pages/Checkout'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import Orders from './pages/Orders'
@@ -28,10 +29,10 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         <Route path="/dashboard" element={<ProtectedRoute />}>
-          <Route path="" element={<Dashboard />}>
-            <Route path="profile" element={<Profile />} />
-            <Route path="orders" element={<Orders />} />
-          </Route>
+          <Route path="" element={<Dashboard />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="checkout" element={<Checkout />} />
         </Route>
 
         <Route path="/admin/dashboard" element={<AdminRoute />}>

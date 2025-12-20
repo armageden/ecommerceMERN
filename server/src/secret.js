@@ -17,6 +17,9 @@ const smtpUsername = process.env.SMTP_USERNAME || "";
 
 const smptPassword = process.env.SMTP_PASSWORD || "";
 const clientURL = process.env.CLIENT_URL || "";
+const braintreeMerchantId = process.env.BRAINTREE_MERCHANT_ID;
+const braintreePublicKey = process.env.BRAINTREE_PUBLIC_KEY;
+const braintreePrivateKey = process.env.BRAINTREE_PRIVATE_KEY;
 
 module.exports = {
   serverPort,
@@ -28,4 +31,7 @@ module.exports = {
   clientURL,
   jwtAccesKey,
   jwtResetPasswordKey,
+  braintreeMerchantId,
+  braintreePublicKey,
+  braintreePrivateKey
 };

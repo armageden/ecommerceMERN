@@ -650,12 +650,23 @@ button:hover {
   padding: 4rem;
 }
 
-.cart-badge {
-  background-color: #dc3545;
-  color: white;
-  border-radius: 50%;
-  padding: 0.1rem 0.4rem;
-  font-size: 0.7rem;
-  margin-left: 0.3rem;
-  vertical-align: top;
+
+/* Checkout Styles */
+.checkout-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.checkout-summary {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.payment-section {
+  margin-top: 2rem;
 }
