@@ -741,9 +741,20 @@ button:hover {
   border-bottom: none;
 }
 
-.order-total {
-  margin-top: 1rem;
-  text-align: right;
-  font-size: 1.1rem;
-  color: #333;
+
+/* Admin Orders Styles */
+.admin-orders-container {
+  padding: 1rem;
+}
+
+.order-buyer {
+  color: #555;
+  margin-left: 1rem;
+}
+
+.order-status-update {
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
