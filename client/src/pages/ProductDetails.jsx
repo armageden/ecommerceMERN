@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 /**
  * ProductDetails Component
@@ -13,14 +14,24 @@ import { useCart } from '../context/CartContext';
  * - Fetches product details by slug.
  * - Displays product image, name, description, price, category, and stock status.
  * - Fetches related products from the same category.
+ * - Allows logged-in users to submit reviews.
  */
 const ProductDetails = () => {
     const { slug } = useParams();
     const { addToCart } = useCart();
+    const { auth } = useAuth();
     const [product, setProduct] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    // Reviews state
+    const [reviews, setReviews] = useState([]);
+    const [numReviews, setNumReviews] = useState(0);
+    const [averageRating, setAverageRating] = useState(0);
+    const [rating, setRating] = useState(5);
+    const [comment, setComment] = useState('');
+    const [submitting, setSubmitting] = useState(false);
 
     // Fetch product details and related products
     useEffect(() => {
@@ -47,6 +58,9 @@ const ProductDetails = () => {
                             setRelatedProducts(related);
                         }
                     }
+
+                    // 3. Fetch reviews for this product
+                    await fetchReviews(currentProduct._id);
                 }
             } catch (err) {
                 console.error('Error fetching product details:', err);
@@ -60,6 +74,36 @@ const ProductDetails = () => {
             fetchProductAndRelated();
         }
     }, [slug]);
+
+    const fetchReviews = async (productId) => {
+        try {
+            const { data } = await api.get(`/reviews/${productId}`);
+            setReviews(data.reviews || []);
+            setNumReviews(data.numReviews || 0);
+            setAverageRating(data.averageRating || 0);
+        } catch (err) {
+            console.error('Error fetching reviews:', err);
+        }
+    };
+
+    const handleSubmitReview = async (e) => {
+        e.preventDefault();
+        if (!product) return;
+
+        setSubmitting(true);
+        try {
+            await api.post(`/reviews/${product._id}`, { rating, comment });
+            setComment('');
+            setRating(5);
+            await fetchReviews(product._id);
+            alert('Review submitted successfully!');
+        } catch (err) {
+            const message = err.response?.data?.error || 'Error submitting review';
+            alert(message);
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     if (loading) return <div className="loading">Loading product details...</div>;
     if (error) return <div className="error-message">{error}</div>;
@@ -128,6 +172,64 @@ const ProductDetails = () => {
                                         View Details
                                     </Link>
                                 </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Reviews Section */}
+            <div className="reviews-section">
+                <h3>Customer Reviews ({numReviews})</h3>
+                <p className="average-rating">Average Rating: {averageRating.toFixed(1)} / 5</p>
+
+                {auth?.user && (
+                    <form onSubmit={handleSubmitReview} className="review-form">
+                        <h4>Write a Review</h4>
+                        <div className="form-group">
+                            <label htmlFor="rating">Rating</label>
+                            <select
+                                id="rating"
+                                value={rating}
+                                onChange={(e) => setRating(e.target.value)}
+                            >
+                                <option value="5">5 - Excellent</option>
+                                <option value="4">4 - Very Good</option>
+                                <option value="3">3 - Good</option>
+                                <option value="2">2 - Fair</option>
+                                <option value="1">1 - Poor</option>
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="comment">Comment</label>
+                            <textarea
+                                id="comment"
+                                rows="4"
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <button type="submit" className="btn-primary" disabled={submitting}>
+                            {submitting ? 'Submitting...' : 'Submit Review'}
+                        </button>
+                    </form>
+                )}
+
+                {reviews.length === 0 ? (
+                    <p>No reviews yet. Be the first to review!</p>
+                ) : (
+                    <div className="reviews-list">
+                        {reviews.map((r, i) => (
+                            <div key={i} className="review-card">
+                                <div className="review-header">
+                                    <span className="reviewer-name">{r.name}</span>
+                                    <span className="review-rating">Rating: {r.rating}/5</span>
+                                </div>
+                                <p className="review-comment">{r.comment}</p>
+                                <span className="review-date">
+                                    {new Date(r.createdAt).toLocaleDateString()}
+                                </span>
                             </div>
                         ))}
                     </div>

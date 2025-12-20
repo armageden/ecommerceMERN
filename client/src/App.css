@@ -752,9 +752,66 @@ button:hover {
   margin-left: 1rem;
 }
 
-.order-status-update {
-  margin: 1rem 0;
+
+/* Reviews Styles */
+.reviews-section {
+  margin-top: 3rem;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.average-rating {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.review-form {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.review-form h4 {
+  margin-bottom: 1rem;
+}
+
+.reviews-list {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 1rem;
+}
+
+.review-card {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.reviewer-name {
+  font-weight: bold;
+}
+
+.review-rating {
+  color: #f39c12;
+}
+
+.review-comment {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.review-date {
+  font-size: 0.85rem;
+  color: #888;
 }

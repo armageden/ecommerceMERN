@@ -51,6 +51,41 @@ const productSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        reviews: [
+            {
+                user: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Users',
+                    required: true,
+                },
+                name: {
+                    type: String,
+                    required: true,
+                },
+                rating: {
+                    type: Number,
+                    required: true,
+                    min: 1,
+                    max: 5,
+                },
+                comment: {
+                    type: String,
+                    required: true,
+                },
+                createdAt: {
+                    type: Date,
+                    default: Date.now,
+                },
+            },
+        ],
+        numReviews: {
+            type: Number,
+            default: 0,
+        },
+        averageRating: {
+            type: Number,
+            default: 0,
+        },
     },
     { timestamps: true }
 );

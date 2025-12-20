@@ -15,6 +15,13 @@ vi.mock('../context/CartContext', () => ({
     }),
 }));
 
+// Mock AuthContext
+vi.mock('../context/AuthContext', () => ({
+    useAuth: () => ({
+        auth: { user: { name: 'Test User' }, token: 'fake-token' },
+    }),
+}));
+
 describe('ProductDetails Component', () => {
     it('renders product details', async () => {
         // Mock successful API responses
@@ -44,6 +51,16 @@ describe('ProductDetails Component', () => {
                     data: {
                         success: true,
                         payload: { products: [] }
+                    }
+                });
+            }
+            // Mock reviews API (third API call)
+            if (url === '/products/1/reviews') {
+                return Promise.resolve({
+                    data: {
+                        reviews: [],
+                        numReviews: 0,
+                        averageRating: 0
                     }
                 });
             }

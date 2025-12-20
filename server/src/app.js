@@ -13,6 +13,7 @@ const categoryRouter = require("./routers/categoryRouter");
 const productRouter = require("./routers/productRouter");
 const braintreeRouter = require("./routers/braintreeRouter");
 const orderRouter = require("./routers/orderRouter");
+const reviewRouter = require("./routers/reviewRouter");
 
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
@@ -49,6 +50,7 @@ app.use("/api/categories", categoryRouter);
 app.use("/api/products", productRouter);
 app.use("/api/braintree", braintreeRouter);
 app.use("/api/orders", orderRouter);
+app.use("/api/reviews", reviewRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the server!");
