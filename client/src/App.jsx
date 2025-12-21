@@ -16,10 +16,8 @@ import AdminUsers from './pages/AdminUsers'
 import AdminCategories from './pages/AdminCategories'
 import AdminProducts from './pages/AdminProducts'
 import AdminProductForm from './pages/AdminProductForm'
-import Products from './pages/admin/Products'
-import UpdateProduct from './pages/admin/UpdateProduct'
-import Users from './pages/admin/Users'
 import AdminOrders from './pages/AdminOrders'
+import Navbar from './components/Navbar'
 
 function App() {
   return (
@@ -41,11 +39,11 @@ function App() {
 
         <Route path="/admin/dashboard" element={<AdminRoute />}>
           <Route path="" element={<AdminDashboard />} />
-          <Route path="create-category" element={<CreateCategory />} />
-          <Route path="create-product" element={<CreateProduct />} />
-          <Route path="products" element={<Products />} />
-          <Route path="product/:slug" element={<UpdateProduct />} />
-          <Route path="users" element={<Users />} />
+          <Route path="categories" element={<AdminCategories />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="products/create" element={<AdminProductForm />} />
+          <Route path="products/edit/:slug" element={<AdminProductForm />} />
+          <Route path="users" element={<AdminUsers />} />
           <Route path="orders" element={<AdminOrders />} />
         </Route>
       </Routes>
