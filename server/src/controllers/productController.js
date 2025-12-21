@@ -83,6 +83,12 @@ const getProducts = async (req, res, next) => {
             filter.shipping = shipping === "true";
         }
 
+        // Rating filter
+        const minRating = req.query.minRating;
+        if (minRating) {
+            filter.averageRating = { $gte: Number(minRating) };
+        }
+
         // Dynamic sorting logic
         let sortCriteria = {};
         if (sort) {

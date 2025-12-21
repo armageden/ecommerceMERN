@@ -26,6 +26,7 @@ const Home = () => {
     const [search, setSearch] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+    const [minRating, setMinRating] = useState('');
     const [sort, setSort] = useState('-createdAt'); // Default: Newest first
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -67,6 +68,7 @@ const Home = () => {
                     category: selectedCategory,
                     minPrice: priceRange.min,
                     maxPrice: priceRange.max,
+                    minRating,
                 };
 
                 const response = await api.get('/products', { params });
@@ -89,7 +91,7 @@ const Home = () => {
         }, 500);
 
         return () => clearTimeout(timeoutId);
-    }, [page, search, selectedCategory, priceRange, sort]);
+    }, [page, search, selectedCategory, priceRange, sort, minRating]);
 
     /**
      * Handles changes in price input fields.
@@ -107,6 +109,7 @@ const Home = () => {
         setSearch('');
         setSelectedCategory('');
         setPriceRange({ min: '', max: '' });
+        setMinRating('');
         setSort('-createdAt');
         setPage(1);
     };
@@ -159,6 +162,22 @@ const Home = () => {
                             onChange={handlePriceChange}
                         />
                     </div>
+                </div>
+
+                {/* Rating Filter */}
+                <div className="filter-group">
+                    <h4>Minimum Rating</h4>
+                    <select
+                        value={minRating}
+                        onChange={(e) => { setMinRating(e.target.value); setPage(1); }}
+                        className="rating-select"
+                    >
+                        <option value="">Any Rating</option>
+                        <option value="4">4 Stars & Up</option>
+                        <option value="3">3 Stars & Up</option>
+                        <option value="2">2 Stars & Up</option>
+                        <option value="1">1 Star & Up</option>
+                    </select>
                 </div>
 
                 <button onClick={handleResetFilters} className="btn-secondary">Reset Filters</button>
