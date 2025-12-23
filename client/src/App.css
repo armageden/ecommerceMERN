@@ -1339,3 +1339,126 @@ button:disabled {
   color: #666;
   font-size: 1.1rem;
 }
+
+/* ==================== */
+/* WISHLIST STYLES      */
+/* ==================== */
+.wishlist-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.wishlist-container h2 {
+  margin-bottom: 2rem;
+  color: var(--dark);
+}
+
+.empty-wishlist {
+  text-align: center;
+  padding: 3rem;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.empty-wishlist p {
+  margin-bottom: 1.5rem;
+  color: var(--gray);
+  font-size: 1.1rem;
+}
+
+.wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.wishlist-item {
+  display: flex;
+  gap: 1rem;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease;
+}
+
+.wishlist-item:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.wishlist-image {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.wishlist-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.wishlist-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.wishlist-info h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.wishlist-info .price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.wishlist-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.wishlist-actions .btn-primary,
+.wishlist-actions .btn-secondary {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  width: auto;
+}
+
+.btn-remove {
+  background: var(--white);
+  color: var(--error);
+  border: 2px solid var(--error);
+}
+
+.btn-remove:hover {
+  background: var(--error);
+  color: var(--white);
+}
+
+/* Add to Wishlist Button */
+.btn-wishlist {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  margin-top: 0.5rem;
+}
+
+.btn-wishlist:hover {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.btn-wishlist.active {
+  background: var(--error);
+  border-color: var(--error);
+  color: var(--white);
+}

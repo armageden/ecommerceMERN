@@ -18,6 +18,7 @@ import AdminProducts from './pages/AdminProducts'
 import AdminProductForm from './pages/AdminProductForm'
 import AdminOrders from './pages/AdminOrders'
 import Navbar from './components/Navbar'
+import Wishlist from './pages/Wishlist'
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="orders" element={<Orders />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="wishlist" element={<Wishlist />} />
         </Route>
 
         <Route path="/admin/dashboard" element={<AdminRoute />}>

@@ -33,6 +33,9 @@ const ProductDetails = () => {
     const [comment, setComment] = useState('');
     const [submitting, setSubmitting] = useState(false);
 
+    // Wishlist state
+    const [inWishlist, setInWishlist] = useState(false);
+
     // Fetch product details and related products
     useEffect(() => {
         const fetchProductAndRelated = async () => {
@@ -105,6 +108,43 @@ const ProductDetails = () => {
         }
     };
 
+    // Check if product is in wishlist
+    useEffect(() => {
+        const checkWishlist = async () => {
+            if (auth?.token && product) {
+                try {
+                    const { data } = await api.get('/wishlist');
+                    const isInWishlist = data.products?.some(p => p._id === product._id);
+                    setInWishlist(isInWishlist);
+                } catch (err) {
+                    console.error('Error checking wishlist:', err);
+                }
+            }
+        };
+        checkWishlist();
+    }, [auth?.token, product]);
+
+    const toggleWishlist = async () => {
+        if (!auth?.token) {
+            alert('Please login to add to wishlist');
+            return;
+        }
+        try {
+            if (inWishlist) {
+                await api.delete(`/wishlist/${product._id}`);
+                setInWishlist(false);
+                alert('Removed from wishlist');
+            } else {
+                await api.post('/wishlist', { productId: product._id });
+                setInWishlist(true);
+                alert('Added to wishlist!');
+            }
+        } catch (err) {
+            const message = err.response?.data?.error || 'Error updating wishlist';
+            alert(message);
+        }
+    };
+
     if (loading) return <div className="loading">Loading product details...</div>;
     if (error) return <div className="error-message">{error}</div>;
     if (!product) return <div className="error-message">Product not found.</div>;
@@ -142,6 +182,12 @@ const ProductDetails = () => {
                         className="btn-primary btn-large"
                     >
                         Add to Cart
+                    </button>
+                    <button
+                        onClick={toggleWishlist}
+                        className={`btn-wishlist btn-large ${inWishlist ? 'active' : ''}`}
+                    >
+                        {inWishlist ? '❤️ In Wishlist' : '🤍 Add to Wishlist'}
                     </button>
                 </div>
             </div>
